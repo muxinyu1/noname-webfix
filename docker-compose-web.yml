@@ -1,0 +1,12 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    container_name: noname-web
+    restart: unless-stopped
+    ports:
+      - "8089:8089"
+    # Mount the config file to persist changes if needed, or remove this if not needed
+    # volumes:
+    #   - ./config.js:/app/game/config.js

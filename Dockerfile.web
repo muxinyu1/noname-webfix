@@ -1,0 +1,36 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Initialize npm and install dependencies required by noname-server.js
+# Force express 4.x because noname-server.js uses syntax not supported by express 5.x ("*")
+RUN npm init -y && \
+    npm install express@4 minimist body-parser
+
+# Copy the entire project to serve static files
+COPY . .
+
+# Install openssl to generate self-signed certificates
+RUN apk add --no-cache openssl
+
+# Generate a self-signed certificate that includes the IP 10.0.0.5 (and localhost)
+# This is critical for Chrome/Browsers to allow ServiceWorkers on a private IP.
+RUN printf "[req]\n\
+distinguished_name = req_distinguished_name\n\
+x509_extensions = v3_req\n\
+prompt = no\n\
+\n\
+[req_distinguished_name]\n\
+CN = noname-server\n\
+\n\
+[v3_req]\n\
+subjectAltName = DNS:localhost,IP:127.0.0.1,IP:10.0.0.5\n" > openssl.cnf && \
+    openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+    -keyout localhost.decrypted.key \
+    -out localhost.crt \
+    -config openssl.cnf
+
+# HTTPs server port
+EXPOSE 8089
+
+CMD ["node", "noname-server.js", "--https"]
