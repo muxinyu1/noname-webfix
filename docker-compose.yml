@@ -4,6 +4,6 @@ services:
     container_name: noname-lobby
     restart: unless-stopped
     environment:
-      - SERVER_TOKEN=muxinyu132mx
+      - SERVER_TOKEN=$SERVER_TOKEN
     ports:
       - "8080:8080"

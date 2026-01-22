@@ -1,0 +1,16 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Initialize npm and install ws dependency
+RUN npm init -y && \
+    npm install ws@7
+
+# Copy only the domain specific server file
+COPY game/server_domain.js .
+
+# We don't need openssl generation here because encryption happens at Nginx level
+
+EXPOSE 8080
+
+CMD ["node", "server_domain.js"]
