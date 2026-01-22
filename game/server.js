@@ -381,7 +381,7 @@
 					ws.close();
 				}
 			}
-		}, 60000);
+		}, 30000);
 		ws.on("message", function (message) {
 			if (!clients[this.wsid]) {return;}
 			if (message == "heartbeat") {
